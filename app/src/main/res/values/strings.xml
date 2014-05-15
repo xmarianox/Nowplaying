@@ -2,7 +2,9 @@
 <resources>
 
     <string name="app_name">Nowplaying</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="buscar_track">Buscar Track</string>
+
+    <!-- Menu -->
     <string name="action_settings">Settings</string>
 
 </resources>
