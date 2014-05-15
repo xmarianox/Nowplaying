@@ -10,24 +10,50 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 
 public class MainActivity extends Activity {
+
+    Button btn_buscar;
+    EditText input_buscar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btn_buscar = (Button) findViewById(R.id.btn_buscar);
+        btn_buscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                input_buscar = (EditText) findViewById(R.id.input_buscar);
+                String query = input_buscar.getText().toString();
+
+                try {
+                    new BuscarTracks().execute("https://ws.spotify.com/search/1/track.json?q="+ URLEncoder.encode(query, "utf-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 
@@ -90,10 +116,60 @@ public class MainActivity extends Activity {
             return result;
         }
 
+/**
+{
+    info: {
+        num_results: 142,
+                limit: 100,
+                offset: 0,
+                query: "everlong",
+                type: "track",
+                page: 1
+    },
+    tracks: [
+    {
+        album: {
+            released: "2009",
+                    href: "spotify:album:1zCNrbPpz5OLSr6mSpPdKm",
+                    name: "Greatest Hits",
+                    availability: {
+                territories: "AD AR AT AU BE BG BO BR CA CH CL CO CR CY CZ DE DK DO EC EE ES FI FR GB GR GT HK HN HR HU IE IS IT LI LT LU LV MC MT MX MY NI NL NO NZ PA PE PH PL PT PY RO SE SG SI SK SV TR TW US UY"
+            }
+        },
+        name: "Everlong",
+                popularity: "0.77",
+            external-ids: [
+        {
+            type: "isrc",
+                    id: "USRW29600011"
+        }
+        ],
+        length: 249.986,
+                href: "spotify:track:07q6QTQXyPRCf7GbLakRPr",
+            artists: [
+        {
+            href: "spotify:artist:7jy3rLJdDQY21OgRLCZ9sD",
+                    name: "Foo Fighters"
+        }
+        ],
+        track-number: "3"
+    },
+*/
         @Override
         protected void onPostExecute(String resultado) {
             // En result está el texto que viene de Internet
             dialog.dismiss();
+
+            try {
+                JSONObject json = new JSONObject(resultado);
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Ocurrio un error...", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
