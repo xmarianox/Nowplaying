@@ -20,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -162,6 +163,9 @@ public class MainActivity extends Activity {
 
             try {
                 JSONObject json = new JSONObject(resultado);
+                JSONArray jsonArray = json.getJSONArray("tracks");
+
+                //Toast.makeText(MainActivity.this, jsonArray.length(), Toast.LENGTH_SHORT).show();
 
 
 
