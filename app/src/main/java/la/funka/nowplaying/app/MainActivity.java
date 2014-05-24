@@ -1,6 +1,5 @@
 package la.funka.nowplaying.app;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -9,10 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -31,12 +28,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
 
     Button btn_buscar;
     EditText input_buscar;
     TrackAdapter adaptador;
-    ListView listaDeTracks;
     ArrayList<SpotifyTrack> tracks_list;
 
 
@@ -63,8 +59,7 @@ public class MainActivity extends Activity {
         });
 
         adaptador = new TrackAdapter(this, R.layout.list_item, tracks_list);
-        listaDeTracks = (ListView) findViewById(R.id.custom_list);
-        listaDeTracks.setAdapter(adaptador);
+        setListAdapter(adaptador);
     }
 
     @Override

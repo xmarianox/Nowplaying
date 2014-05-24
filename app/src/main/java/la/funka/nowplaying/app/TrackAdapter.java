@@ -56,4 +56,6 @@ public class TrackAdapter extends ArrayAdapter<SpotifyTrack> {
         TextView title_track;
         TextView label_uri;
     }
+
+
  }

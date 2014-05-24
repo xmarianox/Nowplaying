@@ -36,7 +36,7 @@
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/custom_list"
+        android:id="@android:id/list"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/btn_buscar" />
 
