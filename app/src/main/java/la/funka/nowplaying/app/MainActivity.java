@@ -1,5 +1,6 @@
 package la.funka.nowplaying.app;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -29,12 +31,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends Activity {
 
     Button btn_buscar;
     EditText input_buscar;
-    ArrayList<String> tracks;
-    ArrayAdapter adaptador;
+    TrackAdapter adaptador;
+    ListView listaDeTracks;
+    ArrayList<SpotifyTrack> tracks_list;
 
 
     @Override
@@ -42,7 +45,7 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tracks = new ArrayList<String>();
+        tracks_list = new ArrayList<SpotifyTrack>();
 
         btn_buscar = (Button) findViewById(R.id.btn_buscar);
         btn_buscar.setOnClickListener(new View.OnClickListener() {
@@ -59,9 +62,9 @@ public class MainActivity extends ListActivity {
             }
         });
 
-        adaptador = new ArrayAdapter(this, android.R.layout.simple_list_item_1, tracks);
-        setListAdapter(adaptador);
-
+        adaptador = new TrackAdapter(this, R.layout.list_item, tracks_list);
+        listaDeTracks = (ListView) findViewById(R.id.custom_list);
+        listaDeTracks.setAdapter(adaptador);
     }
 
     @Override
@@ -93,7 +96,7 @@ public class MainActivity extends ListActivity {
 
         @Override
         protected void onPreExecute() {
-            dialog = ProgressDialog.show(MainActivity.this, "Por favor espere...", "Descargando clima...", true);
+            dialog = ProgressDialog.show(MainActivity.this, "Por favor espere...", "Buscando el track...", true);
             super.onPreExecute();
         }
 
@@ -120,47 +123,23 @@ public class MainActivity extends ListActivity {
             }
             return result;
         }
-/**
- * https://spotifyapps.contenidos-digitales.com/mariano/mobile_app.php/search/track/ {query}
- *
- [
-     {
-        id: "spotify:track:07q6QTQXyPRCf7GbLakRPr",
-        label: "Foo Fighters - Everlong",
-        value: "Foo Fighters - Everlong",
-        availability: "AD AR AT AU BE BG BO BR CA CH CL CO CR CY CZ DE DK DO EC EE ES FI FR GB GR GT HK HN HR HU IE IS IT LI LT LU LV MC MT MX MY NI NL NO NZ PA PE PH PL PT PY RO SE SG SI SK SV TR TW US UY"
-     },
-     {
-        id: "spotify:track:3QmesrvdbPjwf7i40nht1D",
-        label: "Foo Fighters - Everlong - Acoustic Version",
-        value: "Foo Fighters - Everlong - Acoustic Version",
-        availability: "AD AR AT AU BE BG BO BR CA CH CL CO CR CY CZ DE DK DO EC EE ES FI FR GB GR GT HK HN HR HU IE IS IT LI LT LU LV MC MT MX MY NI NL NO NZ PA PE PH PL PT PY RO SE SG SI SK SV TR TW US UY"
-    }
- ]
- *
-*/
+
         @Override
         protected void onPostExecute(String resultado) {
             // En result está el texto que viene de Internet
             dialog.dismiss();
-
             try {
                 JSONArray jsonArray = new JSONArray(resultado);
-
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject listadoJson = jsonArray.getJSONObject(i);
-
                     String uri = listadoJson.getString("id");
                     String label = listadoJson.getString("label");
-
-                    tracks.add(label);
+                    tracks_list.add(new SpotifyTrack(R.drawable.vinil, label, uri));
                 }
-
                 adaptador.notifyDataSetChanged();
-
             } catch (JSONException e) {
                 e.printStackTrace();
-                Toast.makeText(MainActivity.this, "Ocurrio un error...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Ocurrio un error al buscar el track...", Toast.LENGTH_SHORT).show();
             }
 
         }
