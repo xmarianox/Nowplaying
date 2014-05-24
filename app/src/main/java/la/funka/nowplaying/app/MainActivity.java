@@ -118,43 +118,23 @@ public class MainActivity extends Activity {
         }
 
 /**
-{
-    info: {
-        num_results: 142,
-                limit: 100,
-                offset: 0,
-                query: "everlong",
-                type: "track",
-                page: 1
-    },
-    tracks: [
-    {
-        album: {
-            released: "2009",
-                    href: "spotify:album:1zCNrbPpz5OLSr6mSpPdKm",
-                    name: "Greatest Hits",
-                    availability: {
-                territories: "AD AR AT AU BE BG BO BR CA CH CL CO CR CY CZ DE DK DO EC EE ES FI FR GB GR GT HK HN HR HU IE IS IT LI LT LU LV MC MT MX MY NI NL NO NZ PA PE PH PL PT PY RO SE SG SI SK SV TR TW US UY"
-            }
-        },
-        name: "Everlong",
-                popularity: "0.77",
-            external-ids: [
-        {
-            type: "isrc",
-                    id: "USRW29600011"
-        }
-        ],
-        length: 249.986,
-                href: "spotify:track:07q6QTQXyPRCf7GbLakRPr",
-            artists: [
-        {
-            href: "spotify:artist:7jy3rLJdDQY21OgRLCZ9sD",
-                    name: "Foo Fighters"
-        }
-        ],
-        track-number: "3"
-    },
+ * https://spotifyapps.contenidos-digitales.com/mariano/mobile_app.php/search/track/ {query}
+ *
+ [
+     {
+        id: "spotify:track:07q6QTQXyPRCf7GbLakRPr",
+        label: "Foo Fighters - Everlong",
+        value: "Foo Fighters - Everlong",
+        availability: "AD AR AT AU BE BG BO BR CA CH CL CO CR CY CZ DE DK DO EC EE ES FI FR GB GR GT HK HN HR HU IE IS IT LI LT LU LV MC MT MX MY NI NL NO NZ PA PE PH PL PT PY RO SE SG SI SK SV TR TW US UY"
+     },
+     {
+        id: "spotify:track:3QmesrvdbPjwf7i40nht1D",
+        label: "Foo Fighters - Everlong - Acoustic Version",
+        value: "Foo Fighters - Everlong - Acoustic Version",
+        availability: "AD AR AT AU BE BG BO BR CA CH CL CO CR CY CZ DE DK DO EC EE ES FI FR GB GR GT HK HN HR HU IE IS IT LI LT LU LV MC MT MX MY NI NL NO NZ PA PE PH PL PT PY RO SE SG SI SK SV TR TW US UY"
+    }
+ ]
+ *
 */
         @Override
         protected void onPostExecute(String resultado) {
@@ -162,8 +142,12 @@ public class MainActivity extends Activity {
             dialog.dismiss();
 
             try {
-                JSONObject json = new JSONObject(resultado);
-                JSONArray jsonArray = json.getJSONArray("tracks");
+                JSONArray jsonArray = new JSONArray(resultado);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject listadoJson = jsonArray.getJSONObject(i);
+
+                }
 
                 //Toast.makeText(MainActivity.this, jsonArray.length(), Toast.LENGTH_SHORT).show();
 
