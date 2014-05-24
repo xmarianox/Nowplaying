@@ -1,19 +1,16 @@
 package la.funka.nowplaying.app;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -29,17 +26,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
 
     Button btn_buscar;
     EditText input_buscar;
+    ArrayList<String> tracks;
+    ArrayAdapter adaptador;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tracks = new ArrayList<String>();
 
         btn_buscar = (Button) findViewById(R.id.btn_buscar);
         btn_buscar.setOnClickListener(new View.OnClickListener() {
@@ -49,12 +52,15 @@ public class MainActivity extends Activity {
                 String query = input_buscar.getText().toString();
 
                 try {
-                    new BuscarTracks().execute("https://ws.spotify.com/search/1/track.json?q="+ URLEncoder.encode(query, "utf-8"));
+                    new BuscarTracks().execute("http://spotifyapps.contenidos-digitales.com/mariano/mobile_app.php/search/track/"+ URLEncoder.encode(query, "utf-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
         });
+
+        adaptador = new ArrayAdapter(this, android.R.layout.simple_list_item_1, tracks);
+        setListAdapter(adaptador);
 
     }
 
@@ -73,16 +79,14 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     /**
-     *   BuscarTracks
-     *
-     *   https://spotifyapps.contenidos-digitales.com/mariano/app.php/search/track/
-     *
+     *   BuscarTracks:
+     *   https://spotifyapps.contenidos-digitales.com/mariano/mobile_app.php/search/track/ {query}
+     *   -------
+     *   Generar:
      *   app.php/generate/data: { tipo: actividad, duracion: tiempo, track: track, name: userprofile.name, email: userprofile.email, id: userprofile.id }
-     *
+     *   -------
+     *   Agregar:
      *   https://spotifyapps.contenidos-digitales.com/absolut/app.php/push/
-     *
-     *   https://ws.spotify.com/search/1/track.json?q={nombre_track}
-     *   new BuscarTracks().execute("URL");
      */
     public class BuscarTracks extends AsyncTask<String, Void, String> {
         ProgressDialog dialog;
@@ -116,7 +120,6 @@ public class MainActivity extends Activity {
             }
             return result;
         }
-
 /**
  * https://spotifyapps.contenidos-digitales.com/mariano/mobile_app.php/search/track/ {query}
  *
@@ -147,11 +150,13 @@ public class MainActivity extends Activity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject listadoJson = jsonArray.getJSONObject(i);
 
+                    String uri = listadoJson.getString("id");
+                    String label = listadoJson.getString("label");
+
+                    tracks.add(label);
                 }
 
-                //Toast.makeText(MainActivity.this, jsonArray.length(), Toast.LENGTH_SHORT).show();
-
-
+                adaptador.notifyDataSetChanged();
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -160,33 +165,4 @@ public class MainActivity extends Activity {
 
         }
     }
-
-    /* Traer imagenes desde internet.
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView miImageView;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.miImageView = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            miImageView.setImageBitmap(result);
-        }
-    }
-    // Cómo se usa
-    //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("url");
-    */
 }
