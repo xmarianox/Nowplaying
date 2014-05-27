@@ -58,4 +58,5 @@ public class TrackAdapter extends ArrayAdapter<SpotifyTrack> {
     }
 
 
+
  }
